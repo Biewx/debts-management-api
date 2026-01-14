@@ -42,6 +42,14 @@ class Debt
     {
         return $this->status;
     }
+    public function getId(): string
+    {
+        return $this->id;
+    }
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
 
     public function getTotalAmount(): float
     {
