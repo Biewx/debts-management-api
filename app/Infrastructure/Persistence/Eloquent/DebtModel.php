@@ -9,12 +9,9 @@ class DebtModel extends Model
     protected $table = 'debts';
 
     protected $fillable = [
-        'id',
         'description',
         'total_amount',
         'status',
     ];
 
-    public $incrementing = false;
-    protected $keyType = 'string';
 }

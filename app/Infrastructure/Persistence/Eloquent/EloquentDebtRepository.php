@@ -12,21 +12,20 @@ class EloquentDebtRepository implements DebtRepository
         $model = DebtModel::findOrFail($id);
 
         return new Debt(
-            id: $model->id,
+            
             description: $model->description,
             totalAmount: $model->total_amount
         );
     }
 
     public function save(Debt $debt): void
-    {
-        DebtModel::updateOrCreate(
-            ['id' => $debt->getId()],
-            [
-                'description' => $debt->getDescription(),
-                'total_amount' => $debt->getTotalAmount(),
-                'status' => $debt->getStatus(),
-            ]
-        );
-    }
+{
+    $model = DebtModel::create([
+        'description' => $debt->getDescription(),
+        'total_amount' => $debt->getTotalAmount(),
+        'status' => $debt->getStatus(),
+    ]);
+
+    $debt->setId($model->id);
+}
 }

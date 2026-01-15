@@ -6,7 +6,7 @@ use DomainException;
 
 class Debt
 {
-    private string $id;
+    private ?int $id = null;
     private string $description;
     private float $totalAmount;
     private string $status;
@@ -15,7 +15,6 @@ class Debt
     public const STATUS_PAID = 'PAID';
 
     public function __construct(
-        string $id,
         string $description,
         float $totalAmount
     ) {
@@ -23,10 +22,35 @@ class Debt
             throw new DomainException('Debt amount must be greater than zero.');
         }
 
-        $this->id = $id;
         $this->description = $description;
         $this->totalAmount = $totalAmount;
         $this->status = self::STATUS_OPEN;
+    }
+
+    // usado pelo repositório após salvar
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function getTotalAmount(): float
+    {
+        return $this->totalAmount;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
     }
 
     public function pay(): void
@@ -36,23 +60,5 @@ class Debt
         }
 
         $this->status = self::STATUS_PAID;
-    }
-
-    public function getStatus(): string
-    {
-        return $this->status;
-    }
-    public function getId(): string
-    {
-        return $this->id;
-    }
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
-
-    public function getTotalAmount(): float
-    {
-        return $this->totalAmount;
     }
 }
