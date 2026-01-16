@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Application\Debts\CreateDebt;
+use App\Infrastructure\Persistence\Eloquent\EloquentDebtRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
@@ -22,5 +23,14 @@ class DebtController extends Controller
         );
 
         return response()->json(null, Response::HTTP_CREATED);
+    }
+
+    public function payDebt(Request $request, int $id, EloquentDebtRepository $repository){
+        $debt = $repository->findById($id);
+        $amount = $request->input('amount');
+
+        $debt->pay($amount);
+
+        $repository->update($debt);
     }
 }

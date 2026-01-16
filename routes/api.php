@@ -6,6 +6,8 @@ use App\Http\Controllers\DebtController;
 
 Route::post('/debts', [DebtController::class, 'store']);
 
+Route::put('/debts/{id}/pay', [DebtController::class, 'payDebt']);
+
 
 Route::get('/user', function (Request $request) {
     return $request->user();
