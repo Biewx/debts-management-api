@@ -8,4 +8,5 @@ interface DebtRepository
     public function save(Debt $debt): void;
     public function update(Debt $debt): void;
     public function listAll(): array;
+    public function listByStatus(string $status): array;
 }

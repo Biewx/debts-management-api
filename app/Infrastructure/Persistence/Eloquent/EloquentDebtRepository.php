@@ -62,7 +62,26 @@ class EloquentDebtRepository implements DebtRepository
         }
 
         return $debtsList;
+    }
 
+    public function listByStatus(string $status): array
+    {
+        $debts = DebtModel::where('status', $status)->get();
+        $debtsList = [];
+
+        foreach ($debts as $d) {
+            $debt = new Debt(
+                $d['description'],
+                (float) $d['total_amount'],
+                (float) $d['paid_amount'],
+                $d['status']
+            );
+
+            $debt->setId($d['id']);
+            $debtsList[] = $debt;
+        }
+
+        return $debtsList;
     }
 
 }
