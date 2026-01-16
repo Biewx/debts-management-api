@@ -9,21 +9,24 @@ class Debt
     private ?int $id = null;
     private string $description;
     private float $totalAmount;
+    private float $paidAmount = 0;
     private string $status;
 
     public const STATUS_OPEN = 'OPEN';
     public const STATUS_PAID = 'PAID';
+    public const STATUS_PARTIAL = 'PARTIAL';
 
     public function __construct(
         string $description,
-        float $totalAmount
+        float $totalAmount,
+        float $paidAmount = 0
     ) {
         if ($totalAmount <= 0) {
             throw new DomainException('Debt amount must be greater than zero.');
         }
-
         $this->description = $description;
         $this->totalAmount = $totalAmount;
+        $this->paidAmount = $paidAmount;
         $this->status = self::STATUS_OPEN;
     }
 
@@ -47,18 +50,38 @@ class Debt
     {
         return $this->totalAmount;
     }
+    public function getPaidAmount(): float
+    {
+        return $this->paidAmount;
+    }
 
     public function getStatus(): string
     {
         return $this->status;
     }
 
-    public function pay(): void
+    public function pay(float $amount): void
     {
         if ($this->status === self::STATUS_PAID) {
             throw new DomainException('Debt is already paid.');
         }
 
-        $this->status = self::STATUS_PAID;
+        if ($amount <= 0) {
+            throw new DomainException('Payment amount must be greater than zero.');
+        }
+
+        if ($this->paidAmount + $amount > $this->totalAmount) {
+            throw new DomainException('Payment exceeds total debt amount.');
+        }
+
+        $this->paidAmount += $amount;
+
+        if ($this->paidAmount === $this->totalAmount) {
+            $this->status = self::STATUS_PAID;
+            return;
+        }else{
+            $this->status = self::STATUS_PARTIAL;
+        }
+
     }
 }
