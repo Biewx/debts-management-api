@@ -14,7 +14,8 @@ class EloquentDebtRepository implements DebtRepository
         $debt = new Debt(
             $model->description,
             (float) $model->total_amount,
-            (float) $model->paid_amount
+            (float) $model->paid_amount,
+            $model->status
         );
 
 

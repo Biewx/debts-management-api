@@ -33,4 +33,17 @@ class DebtController extends Controller
 
         $repository->update($debt);
     }
+
+    public function show(int $id, EloquentDebtRepository $repository){
+        $debt = $repository->findById($id);
+
+        return response()->json([
+            "id" => $debt->getId(),
+            "description" => $debt->getDescription(),
+            "status" => $debt->getStatus(),
+            "paid_amount" => $debt->getPaidAmount(),
+            "total_amount" => $debt->getTotalAmount()
+        ]);
+        
+    }
 }

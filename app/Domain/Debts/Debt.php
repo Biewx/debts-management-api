@@ -19,7 +19,8 @@ class Debt
     public function __construct(
         string $description,
         float $totalAmount,
-        float $paidAmount = 0
+        float $paidAmount = 0,
+        string $status
     ) {
         if ($totalAmount <= 0) {
             throw new DomainException('Debt amount must be greater than zero.');
@@ -27,7 +28,8 @@ class Debt
         $this->description = $description;
         $this->totalAmount = $totalAmount;
         $this->paidAmount = $paidAmount;
-        $this->status = self::STATUS_OPEN;
+        $this->status = $status;
+
     }
 
     // usado pelo repositório após salvar
@@ -76,12 +78,12 @@ class Debt
 
         $this->paidAmount += $amount;
 
-        if ($this->paidAmount === $this->totalAmount) {
+        if (abs($this->paidAmount - $this->totalAmount) < 0.01) {
             $this->status = self::STATUS_PAID;
-            return;
-        }else{
+        } else {
             $this->status = self::STATUS_PARTIAL;
         }
+
 
     }
 }

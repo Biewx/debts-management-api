@@ -17,7 +17,9 @@ class CreateDebt
     ): void {
         $debt = new Debt(
             description: $description,
-            totalAmount: $totalAmount
+            totalAmount: $totalAmount,
+            paidAmount: 0,
+            status: Debt::STATUS_OPEN
         );
 
         $this->repository->save($debt);
