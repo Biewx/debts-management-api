@@ -46,4 +46,25 @@ class DebtController extends Controller
         ]);
         
     }
+
+    public function list(EloquentDebtRepository $repository){
+        $debtsList = $repository->listAll();
+        $result = [];
+
+        foreach ($debtsList as $d) {
+            $debt = [
+                "id" => $d->getId(),
+                "description" => $d->getDescription(),
+                "status" => $d->getStatus(),
+                "paid_amount" => $d->getPaidAmount(),
+                "total_amount" => $d->getTotalAmount()
+            ];
+            $result[] = $debt;
+        }
+        
+        return response()->json($result);
+    }
+
+    
+    
 }

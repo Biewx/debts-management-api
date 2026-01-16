@@ -6,6 +6,7 @@ use App\Http\Controllers\DebtController;
 
 Route::post('/debts', [DebtController::class, 'store']);
 Route::get('/debts/{id}', [DebtController::class, 'show']);
+Route::get('/debts', [DebtController::class, 'list']);
 
 Route::put('/debts/{id}/pay', [DebtController::class, 'payDebt']);
 
