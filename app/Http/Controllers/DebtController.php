@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Application\Debts\CreateDebt;
 use App\Domain\Debts\Debt;
+use App\Domain\Debts\DebtRepository;
+use App\Domain\Payments\PaymentRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentDebtRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentPaymentRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
@@ -52,15 +55,13 @@ class DebtController extends Controller
         return response()->json(null, Response::HTTP_CREATED);
     }
 
-    public function payDebt(Request $request, int $id, EloquentDebtRepository $repository){
+    public function payDebt(Request $request, int $id, DebtRepository $repository, PaymentRepository $paymentRepository){
         $debt = $repository->findById($id);
-        $amount = $request->input('amount');
-        
-        // Esse Payment ainda não está sendo persistido por decisão de escopo.
+        $amount = $request->input('amount');    
         $payment = $debt->pay($amount);
-
         $repository->update($debt);
-
+        $paymentRepository->save($payment);
+        
     }
 
     public function show(int $id, EloquentDebtRepository $repository){

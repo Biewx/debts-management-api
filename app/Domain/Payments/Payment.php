@@ -1,4 +1,8 @@
 <?php
+namespace App\Domain\Payments;
+
+use DateTimeImmutable;
+use DomainException;
 
 final class Payment{
     private float $amount;

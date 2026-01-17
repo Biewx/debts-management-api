@@ -2,8 +2,9 @@
 
 namespace App\Domain\Debts;
 
+use App\Domain\Payments\Payment;
 use DomainException;
-use Payment;
+
 
 class Debt
 {
