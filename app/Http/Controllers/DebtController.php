@@ -55,10 +55,12 @@ class DebtController extends Controller
     public function payDebt(Request $request, int $id, EloquentDebtRepository $repository){
         $debt = $repository->findById($id);
         $amount = $request->input('amount');
-
-        $debt->pay($amount);
+        
+        // Esse Payment ainda não está sendo persistido por decisão de escopo.
+        $payment = $debt->pay($amount);
 
         $repository->update($debt);
+
     }
 
     public function show(int $id, EloquentDebtRepository $repository){

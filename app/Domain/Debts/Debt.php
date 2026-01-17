@@ -3,6 +3,7 @@
 namespace App\Domain\Debts;
 
 use DomainException;
+use Payment;
 
 class Debt
 {
@@ -61,15 +62,12 @@ class Debt
     {
         return $this->status;
     }
+    
 
-    public function pay(float $amount): void
+    public function pay(float $amount): Payment
     {
         if ($this->status === self::STATUS_PAID) {
             throw new DomainException('Debt is already paid.');
-        }
-
-        if ($amount <= 0) {
-            throw new DomainException('Payment amount must be greater than zero.');
         }
 
         if ($this->paidAmount + $amount > $this->totalAmount) {
@@ -83,6 +81,10 @@ class Debt
         } else {
             $this->status = self::STATUS_PARTIAL;
         }
+
+        $payment = new Payment($amount, new \DateTimeImmutable(), $this->id);
+
+        return $payment;
 
 
     }
