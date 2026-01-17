@@ -37,6 +37,11 @@ class DebtController extends Controller
 
     private function getDebtByStatus(string $status){
         $debtsList = $this->repository->listByStatus($status);
+        if (empty($debtsList)){
+            return response()->json([
+                'msg' => 'Debt not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
         return $this->mapping($debtsList);
     }
 
@@ -52,7 +57,9 @@ class DebtController extends Controller
             totalAmount: $data['total_amount']
         );
 
-        return response()->json(null, Response::HTTP_CREATED);
+        return response()->json([
+            'msg' => 'Debt created successfully'
+        ], 201);
     }
 
     public function payDebt(Request $request, int $id, DebtRepository $repository, PaymentRepository $paymentRepository){
@@ -62,6 +69,11 @@ class DebtController extends Controller
         $repository->update($debt);
         $paymentRepository->save($payment);
         
+        return response()->json([
+            'msg' => 'payment registered successfully',
+            'amount' => $payment->getAmount(),
+            'at' => $payment->ocurredAt()->format('Y-m-d H:i:s'),
+        ]);
     }
 
     public function show(int $id, EloquentDebtRepository $repository){
@@ -90,6 +102,17 @@ class DebtController extends Controller
     }
     public function listPaidDebts(){        
         return response()->json($this->getDebtByStatus(Debt::STATUS_PAID));
+    }
+
+    public function listDebtPayments(string $id, PaymentRepository $paymentRepository) 
+    {
+        $payments = $paymentRepository->listByDebtId($id);
+        if (empty($payments)){
+            return response()->json([
+                'msg' => 'Debt not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+        return response()->json($payments);
     }
 
 }

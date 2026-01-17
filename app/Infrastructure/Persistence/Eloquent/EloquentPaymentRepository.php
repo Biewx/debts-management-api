@@ -15,4 +15,9 @@ class EloquentPaymentRepository implements PaymentRepository
             'debt_id' => $payment->getDebtId(),
         ]);
     }
+
+    public function listByDebtId(string $id): array
+    {
+        return PaymentModel::where('debt_id', $id)->get()->toArray();
+    }
 }
