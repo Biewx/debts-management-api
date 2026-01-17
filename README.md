@@ -140,7 +140,7 @@ php artisan migrate
 php artisan serve
 
 ---
-
+````
 ## Possíveis Melhorias
 
 Uso explícito de transações
