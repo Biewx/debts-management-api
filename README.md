@@ -1,59 +1,161 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Debts Management API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API backend para controle de dívidas pessoais, desenvolvida com foco em **regras de negócio explícitas**, **modelo de domínio claro** e **organização de código**, evitando overengineering.
 
-## About Laravel
+Este projeto não tem frontend e não pretende ser um sistema completo, mas sim um **exercício consciente de modelagem e arquitetura backend**.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Visão Geral
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+O sistema permite:
 
-## Learning Laravel
+- Criar dívidas
+- Registrar pagamentos (parciais ou totais)
+- Atualizar automaticamente o estado da dívida
+- Manter um histórico imutável de pagamentos
+- Consultar dívidas por status
+- Consultar histórico de pagamentos de uma dívida
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+O foco principal **não é CRUD**, mas sim:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- estados da dívida
+- regras de negócio no domínio
+- separação clara entre domínio e infraestrutura
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Escopo do Projeto
 
-### Premium Partners
+### O que o projeto faz
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- Controle de dívidas com estados explícitos (`OPEN`, `PARTIAL`, `PAID`)
+- Pagamentos parciais e totais
+- Histórico de pagamentos imutável
+- API REST simples e direta
+- Código organizado para ser facilmente explicável em entrevistas
 
-## Contributing
+### O que o projeto não faz
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- Autenticação / autorização
+- Controle de usuários
+- Parcelamento automático
+- Relatórios avançados
+- Interface gráfica
+- Regras financeiras complexas
 
-## Code of Conduct
+Essas decisões foram **intencionais** para manter o foco em domínio e arquitetura.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## Modelo de Domínio
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Debt
 
-## License
+Representa uma dívida.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Características:
+
+- Possui valor total
+- Mantém quanto já foi pago
+- Controla seu próprio estado
+- Decide suas próprias regras
+
+Estados possíveis:
+
+- `OPEN` — nenhum pagamento realizado
+- `PARTIAL` — pagamento parcial
+- `PAID` — dívida quitada
+
+As regras de negócio **não ficam no controller**.  
+A própria entidade decide se um pagamento é válido e como o estado deve mudar.
+
+---
+
+### Payment
+
+Representa um **fato ocorrido**, não algo editável.
+
+Características:
+
+- Valor do pagamento
+- Data/hora do pagamento
+- Referência à dívida
+- Imutável após criado
+
+Um pagamento **sempre nasce a partir de uma dívida**, como consequência de um ato de pagamento.
+
+---
+
+## Decisões Arquiteturais
+
+- O domínio **não depende do Laravel**
+- Controllers apenas orquestram chamadas
+- Regras de negócio ficam nas entidades
+- Persistência é abstraída por repositórios
+- Infraestrutura (Eloquent) é isolada do domínio
+- Entidades não conhecem banco de dados
+
+Essas decisões tornam o código:
+
+- mais legível
+- mais testável
+- mais fácil de explicar
+
+Trade-off consciente:  
+algumas leituras retornam dados simples, sem reconstruir entidades completas, para evitar complexidade desnecessária.
+
+---
+
+## Fluxo Principal: Pagamento de Dívida
+
+1. A API recebe o valor do pagamento
+2. A dívida valida as regras de negócio
+3. Um pagamento é criado como registro histórico
+4. O estado da dívida é atualizado automaticamente
+5. Ambos são persistidos
+
+O controller **não decide regras**, apenas coordena o fluxo.
+
+---
+
+## Tecnologias Utilizadas
+
+- PHP
+- Laravel
+- MySQL
+- Eloquent ORM
+
+---
+
+## Como Rodar o Projeto
+
+```bash
+git clone <repo>
+cd debts-management-api
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan serve
+
+---
+
+## Possíveis Melhorias
+
+Uso explícito de transações
+
+Testes automatizados
+
+Autenticação
+
+Relatórios
+
+Paginação em consultas
+
+Essas melhorias foram deixadas fora do escopo atual intencionalmente.
+
+## Considerações Finais
+
+Este projeto foi desenvolvido com foco em clareza, decisões conscientes e domínio explícito, buscando representar um nível de maturidade esperado de um desenvolvedor backend em início de carreira profissional.
+```

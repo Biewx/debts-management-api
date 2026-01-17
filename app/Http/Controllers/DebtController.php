@@ -109,7 +109,7 @@ class DebtController extends Controller
         $payments = $paymentRepository->listByDebtId($id);
         if (empty($payments)){
             return response()->json([
-                'msg' => 'Debt not found'
+                'msg' => 'No one payment registered'
             ], Response::HTTP_NOT_FOUND);
         }
         return response()->json($payments);
